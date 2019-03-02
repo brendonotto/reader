@@ -37,7 +37,6 @@ namespace Reader.Tests
 
             var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
             
-
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(new HttpResponseMessage() {
                 StatusCode = HttpStatusCode.OK,
                 Content = new StringContent(JsonConvert.SerializeObject(items), Encoding.UTF8, "application/json")
@@ -50,7 +49,7 @@ namespace Reader.Tests
             _rssService = new RssService(httpClientFactoryMock);
         }
 
-        [Fact(Skip="broken")]
+        [Fact]
         public async Task TestServiceRetrieval()
         {
             _url = "http://example.com/";

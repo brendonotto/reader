@@ -29,20 +29,25 @@ namespace Reader.Web.Services
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = await response.Content.ReadAsStringAsync();
-
-                    var doc = XDocument.Parse(result);
-                    items = (from x in doc.Descendants("item")
-                        select new ItemModel 
-                        {
-                            Title = x.Element("title").Value,
-                            Link = x.Element("link").Value,
-                            Description = x.Element("description").Value
-                        }).ToList();
-
-                    return items;
+                    return ParseRssItems(result);                    
                 }
                 return null;
             }
+        }
+
+        private List<ItemModel> ParseRssItems(string rssXml)
+        {
+            var doc = XDocument.Parse(rssXml);
+            var items = (from x in doc.Descendants("item")
+                select new ItemModel 
+                {
+                    Title = x.Element("title").Value,
+                    Link = x.Element("link").Value,
+                    Description = x.Element("description").Value,
+                    PublishDate = ((DateTime)x.Element("pubDate"))
+                }).ToList();
+
+            return items;
         }
     }
 }
