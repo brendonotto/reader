@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -23,6 +24,8 @@ namespace Reader.Web.Services
         {
             var items = new List<ItemModel>();
 
+            if(string.IsNullOrEmpty(url)) return items;
+
             using(var client = _httpClientFactory.CreateClient())
             using(var response = await client.GetAsync(url))
             {
@@ -31,14 +34,19 @@ namespace Reader.Web.Services
                     var result = await response.Content.ReadAsStringAsync();
                     return ParseRssItems(result);                    
                 }
-                return null;
             }
+
+            return items;
         }
 
         private List<ItemModel> ParseRssItems(string rssXml)
         {
+            var items = new List<ItemModel>();
+
+            if(string.IsNullOrEmpty(rssXml)) return items;
+
             var doc = XDocument.Parse(rssXml);
-            var items = (from x in doc.Descendants("item")
+            items = (from x in doc.Descendants("item")
                 select new ItemModel 
                 {
                     Title = x.Element("title").Value,

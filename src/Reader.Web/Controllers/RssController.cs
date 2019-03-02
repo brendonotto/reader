@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Reader.Web.Models;
@@ -20,6 +21,11 @@ namespace Reader.Web.Controllers
         public async Task<IActionResult> GetRssItems()
         {
             var items = await _rssService.GetRssItemsAsync("http://feeds.hanselman.com/ScottHanselman");
+
+            if (!items.Any())
+            {
+                return BadRequest();
+            }
 
             return Ok(items);
         }
