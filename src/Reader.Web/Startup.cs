@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Reader.Web.Repository;
 using Reader.Web.Services;
 
 namespace Reader.Web
@@ -31,6 +32,9 @@ namespace Reader.Web
                 configuration.RootPath = "ClientApp/build";
             });
 
+            services.Configure<ReaderConfig>(Configuration.GetSection("ReaderConfig"));
+
+            services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IRssService, RssService>();
         }
 

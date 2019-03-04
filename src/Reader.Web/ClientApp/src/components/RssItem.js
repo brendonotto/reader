@@ -6,7 +6,7 @@ const RssItem = (props) => {
         <div>
             <a className="rssItem" href={props.link}>{props.title}</a>
             <br />
-            <span className="publishDate">{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: '2-digit'}).format(new Date(props.publishDate))}</span>
+            {/* <span className="publishDate">{new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: '2-digit'}).format(new Date(props.publishDate))}</span> */}
         </div>
     );
 }

@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Reader.Web.Models;
+using Reader.Web.Repository;
 
 namespace Reader.Web.Services 
 {
     public class RssService : IRssService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileRepository _fileRepository;
 
-        public RssService(IHttpClientFactory httpClientFactory) 
+        public RssService(IHttpClientFactory httpClientFactory, IFileRepository fileRepository) 
         {
             _httpClientFactory = httpClientFactory;
         }
@@ -37,6 +39,18 @@ namespace Reader.Web.Services
             }
 
             return items;
+        }
+
+        public async Task<bool> AddFeed(AddFeedModel feedModel)
+        {
+            var feed = new Feed
+            {
+                Name = feedModel.Name,
+                FeedUrl = feedModel.FeedUrl
+            };
+            var success = await _fileRepository.SaveFeed(feed);
+
+            return success;
         }
 
         private List<ItemModel> ParseRssItems(string rssXml)
