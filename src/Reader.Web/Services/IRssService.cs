@@ -6,6 +6,7 @@ namespace Reader.Web.Services
 {
     public interface IRssService
     {
-        Task<List<ItemModel>> GetRssItemsAsync(string url);
+        Task<List<FeedModel>> GetRssItemsAsync();
+        Task<bool> AddFeed(AddFeedModel feedModel);
     } 
 }

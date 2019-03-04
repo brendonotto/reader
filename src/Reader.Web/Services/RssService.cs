@@ -8,35 +8,61 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Reader.Web.Models;
+using Reader.Web.Repository;
 
 namespace Reader.Web.Services 
 {
     public class RssService : IRssService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFileRepository _fileRepository;
 
-        public RssService(IHttpClientFactory httpClientFactory) 
+        public RssService(IHttpClientFactory httpClientFactory, IFileRepository fileRepository) 
         {
             _httpClientFactory = httpClientFactory;
+            _fileRepository = fileRepository;
         }
 
-        public async Task<List<ItemModel>> GetRssItemsAsync(string url)
+        public async Task<List<FeedModel>> GetRssItemsAsync()
         {
-            var items = new List<ItemModel>();
+            var feedModels = new List<FeedModel>();
 
-            if(string.IsNullOrEmpty(url)) return items;
+            var feeds = await _fileRepository.LoadFeeds();
 
+            if (!feeds.Any()) return feedModels;
+
+            // This could be make to request each feed asynchronously instead of waiting for each to return.
             using(var client = _httpClientFactory.CreateClient())
-            using(var response = await client.GetAsync(url))
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                foreach(var feed in feeds) 
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    return ParseRssItems(result);                    
+                    using(var response = await client.GetAsync(feed.FeedUrl))
+                    {
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            var result = await response.Content.ReadAsStringAsync();
+                            feedModels.Add(new FeedModel
+                            {
+                                FeedName = feed.Name,
+                                RssItems = ParseRssItems(result)
+                            });
+                        }
+                    }
                 }
             }
+            return feedModels;
+        }
 
-            return items;
+        public async Task<bool> AddFeed(AddFeedModel feedModel)
+        {
+            var feed = new Feed
+            {
+                Name = feedModel.Name,
+                FeedUrl = feedModel.FeedUrl
+            };
+            var success = await _fileRepository.SaveFeed(feed);
+
+            return success;
         }
 
         private List<ItemModel> ParseRssItems(string rssXml)

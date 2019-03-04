@@ -1,0 +1,4 @@
+Hanselman~http://feeds.hanselman.com/ScottHanselman
+Wildermuth~http://feeds.feedburner.com/ShawnWildermuth
+CodingHorror~https://feeds.feedburner.com/codinghorror
+Andrew Lock~https://andrewlock.net/rss.xml

@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
-import RssItems from './RssItems';
+import RssFeeds from './RssFeeds';
 
 export class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = { items: [], loading: true };
+    this.state = { feedModels: [], loading: true };
 
     fetch('api/Rss/GetRssItems')
     .then(response => response.json())
     .then(data => {
-      this.setState({ items: data, loading: false});
+      this.setState({ feedModels: data, loading: false});
     })
   }
 
-  static renderRssItems (items) {
+  static renderRssItems (feedModels) {
     return (
       <div>
-        <RssItems items={items} />
+        <RssFeeds feedModels={feedModels} />
       </div>
     )
   }
@@ -24,7 +24,7 @@ export class Home extends Component {
   render () {
     let contents = this.state.loading
       ? <p><em>Loading...</em></p>
-      : Home.renderRssItems(this.state.items);
+      : Home.renderRssItems(this.state.feedModels);
 
     return (
       <div>

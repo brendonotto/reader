@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Reader.Web.Repository;
 using Reader.Web.Services;
 
 namespace Reader.Web
@@ -24,6 +25,7 @@ namespace Reader.Web
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddHttpClient();
+            //services.AddJsonFormatters();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -31,6 +33,9 @@ namespace Reader.Web
                 configuration.RootPath = "ClientApp/build";
             });
 
+            services.Configure<ReaderConfig>(Configuration.GetSection("ReaderConfig"));
+
+            services.AddScoped<IFileRepository, FileRepository>();
             services.AddScoped<IRssService, RssService>();
         }
 

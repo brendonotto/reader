@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Reader.Web.Services;
 
 namespace Reader.Web.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class RssController : Controller
     {
@@ -20,7 +22,7 @@ namespace Reader.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetRssItems()
         {
-            var items = await _rssService.GetRssItemsAsync("http://feeds.hanselman.com/ScottHanselman");
+            var items = await _rssService.GetRssItemsAsync();
 
             if (!items.Any())
             {
@@ -28,6 +30,14 @@ namespace Reader.Web.Controllers
             }
 
             return Ok(items);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddFeed(AddFeedModel feedModel)
+        {
+            var added = await _rssService.AddFeed(feedModel);
+
+            return Created("/api/Rss/GetRssItems", feedModel);
         }
     }
 }
