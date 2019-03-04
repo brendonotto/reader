@@ -49,6 +49,7 @@ namespace Reader.Web.Services
             items = (from x in doc.Descendants("item")
                 select new ItemModel 
                 {
+                    Id = Guid.NewGuid(),
                     Title = x.Element("title").Value,
                     Link = x.Element("link").Value,
                     Description = x.Element("description").Value,

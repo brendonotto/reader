@@ -4,7 +4,7 @@ import RssItem from "./RssItem";
 const RssItems = props => (
     <div>
         {props.items.map(item => (
-            <RssItem {...item} />
+            <RssItem key={item.id} {...item} />
         ))}
     </div>
 )

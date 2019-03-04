@@ -28,7 +28,7 @@ export class Home extends Component {
 
     return (
       <div>
-        <h1>Rss Items</h1>
+        <h3>Recent Articles</h3>
         {contents}
       </div>
     )

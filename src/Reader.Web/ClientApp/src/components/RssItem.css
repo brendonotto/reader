@@ -1,0 +1,10 @@
+.rssItem {
+    color: #10663c;
+    text-decoration: none;
+    margin: 75px 0 75px 0;
+    font-size: 16px;
+}
+
+.publishDate {
+    font-size: 16px;
+}
