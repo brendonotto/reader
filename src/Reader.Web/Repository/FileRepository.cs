@@ -24,7 +24,7 @@ namespace Reader.Web.Repository
                 var lines = await File.ReadAllLinesAsync(Path.Combine(feedFilePath, _readerConfig.Value.FeedFile));
                 foreach(var line in lines)
                 {
-                    var halves = line.Split(":");
+                    var halves = line.Split("~");
                     var feed = new Feed
                     {
                         Name = halves[0],
@@ -49,7 +49,7 @@ namespace Reader.Web.Repository
                 var feedFilePath = Directory.GetCurrentDirectory();
                 using(var sw = File.AppendText(Path.Combine(feedFilePath, _readerConfig.Value.FeedFile)))
                 {
-                    await sw.WriteLineAsync($"{feed.Name}:{feed.FeedUrl}");
+                    await sw.WriteLineAsync($"{feed.Name}~{feed.FeedUrl}");
                 }
                 return true;
             }

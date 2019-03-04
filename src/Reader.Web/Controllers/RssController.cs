@@ -8,6 +8,7 @@ using Reader.Web.Services;
 
 namespace Reader.Web.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class RssController : Controller
     {
@@ -21,7 +22,7 @@ namespace Reader.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetRssItems()
         {
-            var items = await _rssService.GetRssItemsAsync("http://feeds.hanselman.com/ScottHanselman");
+            var items = await _rssService.GetRssItemsAsync();
 
             if (!items.Any())
             {

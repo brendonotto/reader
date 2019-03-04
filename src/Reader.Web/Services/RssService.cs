@@ -20,25 +20,37 @@ namespace Reader.Web.Services
         public RssService(IHttpClientFactory httpClientFactory, IFileRepository fileRepository) 
         {
             _httpClientFactory = httpClientFactory;
+            _fileRepository = fileRepository;
         }
 
-        public async Task<List<ItemModel>> GetRssItemsAsync(string url)
+        public async Task<List<FeedModel>> GetRssItemsAsync()
         {
+            var feedModels = new List<FeedModel>();
             var items = new List<ItemModel>();
 
-            if(string.IsNullOrEmpty(url)) return items;
+            var feeds = await _fileRepository.LoadFeeds();
+
+            if (!feeds.Any()) return feedModels;
 
             using(var client = _httpClientFactory.CreateClient())
-            using(var response = await client.GetAsync(url))
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                foreach(var feed in feeds) 
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    return ParseRssItems(result);                    
+                    using(var response = await client.GetAsync(feed.FeedUrl))
+                    {
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            var result = await response.Content.ReadAsStringAsync();
+                            feedModels.Add(new FeedModel
+                            {
+                                FeedName = feed.Name,
+                                RssItems = ParseRssItems(result)
+                            });
+                        }
+                    }
                 }
             }
-
-            return items;
+            return feedModels;
         }
 
         public async Task<bool> AddFeed(AddFeedModel feedModel)
