@@ -26,12 +26,12 @@ namespace Reader.Web.Services
         public async Task<List<FeedModel>> GetRssItemsAsync()
         {
             var feedModels = new List<FeedModel>();
-            var items = new List<ItemModel>();
 
             var feeds = await _fileRepository.LoadFeeds();
 
             if (!feeds.Any()) return feedModels;
 
+            // This could be make to request each feed asynchronously instead of waiting for each to return.
             using(var client = _httpClientFactory.CreateClient())
             {
                 foreach(var feed in feeds) 
