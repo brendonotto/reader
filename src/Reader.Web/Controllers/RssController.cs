@@ -24,7 +24,7 @@ namespace Reader.Web.Controllers
 
             if (!items.Any())
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return Ok(items);
