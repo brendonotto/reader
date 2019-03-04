@@ -8,6 +8,8 @@ using System.Net.Http;
 using Reader.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Reader.Web.Repository;
+using Microsoft.Extensions.Options;
 
 namespace Reader.Tests
 {
@@ -33,6 +35,13 @@ namespace Reader.Tests
 
             var items = new List<ItemModel>() { item, item2 };
 
+            var feedModel = new FeedModel
+            {
+                FeedName = "My Favorite Feed",
+                RssItems = items
+            };
+            var feedModels = new List<FeedModel> { feedModel };
+
             var feed = new RssFeed();
             feed.Title = "Example blog feed";
             feed.Link = "http://example.com/";
@@ -42,6 +51,8 @@ namespace Reader.Tests
             var serializedFeed = feed.Serialize();
 
             var httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
+            var optionsMock = Substitute.For<IOptions<ReaderConfig>>();
+            var fileRepositoryMock = Substitute.For<IFileRepository>(optionsMock);
             
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(new HttpResponseMessage() {
                 StatusCode = HttpStatusCode.OK,
@@ -52,19 +63,20 @@ namespace Reader.Tests
 
             httpClientFactoryMock.CreateClient().Returns(fakeHttpClient);
 
-            _rssService = new RssService(httpClientFactoryMock);
+            fileRepositoryMock.LoadFeeds().Returns(Task.Run<List<FeedModel>>(() => feedModels));
+
+            _rssService = new RssService(httpClientFactoryMock, fileRepositoryMock);
         }
 
         [Fact]
         public async Task TestServiceRetrieval()
         {
-            _url = "http://example.com/";
-            var actual = await _rssService.GetRssItemsAsync(_url);
+            var actual = await _rssService.GetRssItemsAsync();
 
             Assert.NotNull(actual);
             Assert.NotEmpty(actual);
             Assert.NotNull(actual.FirstOrDefault());
-            Assert.Equal("http://example.com/1", actual.FirstOrDefault().Link);
+            Assert.Equal("My Favorite Feed", actual.FirstOrDefault().FeedName);
         }
     }
 }
